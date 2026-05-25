@@ -35,11 +35,12 @@ def text_w(draw, txt, ft):
     b = draw.textbbox((0, 0), txt, font=ft)
     return b[2] - b[0]
 
-def draw_text(draw, txt, y, size, color, center=True, x=None):
+def draw_text(draw, txt, y, size, color, center=True, x=None, stroke=3, stroke_fill=(0, 0, 0)):
     ft = f(size)
     if center:
         x = (W - text_w(draw, txt, ft)) // 2
-    draw.text((x, y), txt, font=ft, fill=color)
+    draw.text((x, y), txt, font=ft, fill=color,
+              stroke_width=stroke, stroke_fill=stroke_fill)
 
 # 写真の基礎クロップ(1080x1920にフィットする最大の中央クロップ)をキャッシュ
 @lru_cache(maxsize=16)
@@ -83,15 +84,19 @@ def kenburns(path, t, zoom_start=1.05, zoom_end=1.20, pan=(0, 0)):
 @lru_cache(maxsize=32)
 def make_band(h, alpha, reverse):
     ys = np.arange(h, dtype=np.float32) / max(1, h - 1)
+    # 帯の外側70%はベタ濃度、内側30%だけで減衰
+    plateau = 0.30
     if reverse:
-        a = (alpha * (ys ** 1.5)).astype(np.uint8)
+        t = ys
     else:
-        a = (alpha * ((1 - ys) ** 1.5)).astype(np.uint8)
+        t = 1 - ys
+    a_norm = np.where(t > plateau, 1.0, (t / plateau) ** 1.5)
+    a = (alpha * a_norm).astype(np.uint8)
     arr = np.zeros((h, W, 4), dtype=np.uint8)
     arr[..., 3] = a[:, None]
     return arr
 
-def add_bands(img, top_h=520, bot_h=560, top_a=215, bot_a=235):
+def add_bands(img, top_h=620, bot_h=660, top_a=245, bot_a=250):
     base = np.array(img.convert("RGBA"), dtype=np.uint8)
     top = make_band(top_h, top_a, False)
     bot = make_band(bot_h, bot_a, True)
@@ -118,13 +123,13 @@ def small_label(draw, txt, y, color=GOLD):
     line_w = 90
     draw.line([(x - line_w - 20, y + 22), (x - 20, y + 22)], fill=color, width=2)
     draw.line([(x + tw + 20, y + 22), (x + tw + 20 + line_w, y + 22)], fill=color, width=2)
-    draw.text((x, y), txt, font=ft, fill=color)
+    draw.text((x, y), txt, font=ft, fill=color, stroke_width=2, stroke_fill=(0, 0, 0))
 
 # ---- シーン -----------------------------------------------------------------
 
 def s_intro(p, dur):
     img = kenburns(ROOT / "_MG_1135.jpg", p, 1.10, 1.25)
-    img = add_bands(img, top_h=720, bot_h=480, top_a=210, bot_a=200)
+    img = add_bands(img, top_h=820, bot_h=580, top_a=245, bot_a=245)
     d = ImageDraw.Draw(img)
     draw_text(d, "ひとりでも、ふたりでも。", 280, 64, CREAM)
     draw_text(d, "── 大人のための、夜の時間 ──", 380, 36, GOLD_SOFT)
@@ -182,7 +187,7 @@ def s_solo_flower(p, dur):
 def s_transition(p, dur):
     img = kenburns(ROOT / "320A9411.jpg", p, 1.10, 1.20)
     img = ImageEnhance.Brightness(img).enhance(0.85)
-    img = add_bands(img, top_h=600, bot_h=600, top_a=230, bot_a=230)
+    img = add_bands(img, top_h=700, bot_h=700, top_a=250, bot_a=250)
     d = ImageDraw.Draw(img)
     draw_text(d, "── それとも、 ──", 760, 50, GOLD_SOFT)
     draw_text(d, "ふたりで。", 880, 130, CREAM)
@@ -217,7 +222,7 @@ def s_couple_meal(p, dur):
 def s_outro(p, dur):
     img = kenburns(ROOT / "_MG_1135.jpg", p, 1.20, 1.10)
     img = ImageEnhance.Brightness(img).enhance(0.75)
-    img = add_bands(img, top_h=800, bot_h=900, top_a=230, bot_a=240)
+    img = add_bands(img, top_h=900, bot_h=1000, top_a=250, bot_a=252)
     d = ImageDraw.Draw(img)
     draw_text(d, "── 夜風に、ひと息 ──", 360, 38, GOLD_SOFT)
     draw_text(d, "あなたの今夜を、", 460, 72, CREAM)
