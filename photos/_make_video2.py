@@ -128,7 +128,7 @@ def s_intro(p, dur):
     d = ImageDraw.Draw(img)
     draw_text(d, "ひとりでも、ふたりでも。", 280, 64, CREAM)
     draw_text(d, "── 大人のための、夜の時間 ──", 380, 36, GOLD_SOFT)
-    draw_text(d, "禅 園", 1480, 110, GOLD)
+    draw_text(d, "心斎橋 禅園", 1480, 110, GOLD)
     draw_text(d, "for women  /  for couples", 1640, 32, ROSE)
     return fade(img, min(1.0, p * 3)) if p < 0.3 else img
 
@@ -222,14 +222,14 @@ def s_outro(p, dur):
     draw_text(d, "── 夜風に、ひと息 ──", 360, 38, GOLD_SOFT)
     draw_text(d, "あなたの今夜を、", 460, 72, CREAM)
     draw_text(d, "やさしく迎える店。", 560, 80, GOLD)
-    d.line([(W // 2 - 220, 1180), (W // 2 + 220, 1180)], fill=GOLD, width=2)
-    draw_text(d, "禅 園", 1220, 130, GOLD)
-    d.line([(W // 2 - 220, 1390), (W // 2 + 220, 1390)], fill=GOLD, width=2)
+    d.line([(W // 2 - 320, 1180), (W // 2 + 320, 1180)], fill=GOLD, width=2)
+    draw_text(d, "心斎橋 禅園", 1220, 130, GOLD)
+    d.line([(W // 2 - 320, 1390), (W // 2 + 320, 1390)], fill=GOLD, width=2)
     pulse = 0.75 + 0.25 * (0.5 + 0.5 * math.sin(p * 6.28 * 1.2))
     btn_color = tuple(int(c * pulse) for c in GOLD)
     d.rounded_rectangle([180, 1500, W - 180, 1680], radius=24, fill=btn_color)
     draw_text(d, "ご予約はプロフィールから", 1555, 52, INK)
-    draw_text(d, "@ 禅 園   /   solo  &  couple  welcome", 1760, 30, CREAM)
+    draw_text(d, "@ 心斎橋 禅園   /   solo  &  couple  welcome", 1760, 30, CREAM)
     return img
 
 SCENES = [
