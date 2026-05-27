@@ -212,10 +212,10 @@ def s_couple_toast(p, dur):
     return img
 
 def s_couple_meal(p, dur):
-    img = kenburns(ROOT / "DSC00465.jpg", p, 1.06, 1.18, pan=(0.2, 0))
+    img = kenburns(ROOT / "DSC00651.jpg", p, 1.06, 1.18, pan=(-0.2, 0))
     img = add_bands(img, top_h=480, bot_h=560)
     d = ImageDraw.Draw(img)
-    draw_text(d, "目の前で仕上がる、旬の一皿。", 220, 50, CREAM)
+    draw_text(d, "旬を、ひと皿に。", 220, 60, CREAM)
     draw_text(d, "「美味しいね」が、何度も増えていく。", 1520, 36, GOLD_SOFT)
     return img
 
